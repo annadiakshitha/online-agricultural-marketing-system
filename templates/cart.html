@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}Shopping Cart – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Cart', None)]) }}
+<section class="container page-block">
+  <h1>Shopping Cart</h1>
+  <div class="cart-layout" id="cartLayout">
+    <div class="cart-items" id="cartItems"><div class="skeleton-card"><div class="sk sk-line"></div><div class="sk sk-line short"></div></div></div>
+    <aside class="summary" id="cartSummary" aria-label="Order summary"></aside>
+  </div>
+  <div class="empty-state" id="cartEmpty" hidden><i class="fa-solid fa-cart-shopping"></i><h3>Your cart is empty</h3><p>Add seeds, fertilizers or tools to get started.</p><a class="btn btn-primary" href="{{ url_for('products.shop') }}">Continue Shopping</a></div>
+</section>
+{% endblock %}
+{% block js %}<script>document.addEventListener('DOMContentLoaded', () => Cart.renderPage());</script>{% endblock %}

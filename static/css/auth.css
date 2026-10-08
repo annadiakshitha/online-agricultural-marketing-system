@@ -1,0 +1,17 @@
+/* Login, register, contact forms + shared form fields */
+.auth{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - var(--nav-h))}
+.auth-side{background:linear-gradient(rgba(10,40,12,.7),rgba(10,40,12,.7)),var(--bg) center/cover;color:#fff;display:flex;align-items:flex-end;padding:56px}.auth-side h2{font-size:2rem;max-width:420px}.auth-side p{max-width:400px;opacity:.9}
+.auth-card{padding:56px;max-width:560px;width:100%;margin:auto}
+.field{margin-bottom:16px}.field label{display:block;font-weight:600;font-size:.88rem;margin-bottom:6px}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--secondary);outline:none;box-shadow:0 0 0 3px rgba(102,187,106,.2)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field-row[hidden]{display:none}
+.pw{position:relative}.pw input{padding-right:44px}.pw-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;width:36px;height:36px;cursor:pointer;color:var(--muted)}
+.auth-alt{text-align:center;margin-top:20px;color:var(--muted)}
+.role-switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}.role-switch input{position:absolute;opacity:0}
+.role-switch span{display:flex;gap:8px;justify-content:center;align-items:center;padding:12px;border:1.5px solid var(--border);border-radius:10px;font-weight:600;cursor:pointer;background:#fff}
+.role-switch input:checked+span{border-color:var(--primary);background:var(--light);color:var(--dark)}.role-switch input:focus-visible+span{outline:3px solid rgba(102,187,106,.6)}
+.demo-box{margin-top:22px;padding:14px;background:var(--light);border-radius:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.88rem}.demo-box strong{margin-right:auto}
+.demo-fill{border:1px solid var(--primary);background:#fff;color:var(--primary);border-radius:20px;padding:5px 14px;font-weight:600;cursor:pointer}.demo-fill:hover{background:var(--primary);color:#fff}
+.card-form{background:#fff;padding:28px;border-radius:var(--radius);border:1px solid var(--border);margin-top:16px}
+@media (max-width:900px){.auth{grid-template-columns:1fr}.auth-side{display:none}.auth-card{padding:32px 20px}}
+@media (max-width:480px){.field-row{grid-template-columns:1fr}}

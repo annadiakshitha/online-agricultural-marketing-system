@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}Crop Doctor – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Farmer Tools', url_for('tools.hub')), ('Crop Doctor', None)]) }}
+<section class="container page-block">
+  <div class="section-head"><div><span class="eyebrow">{{ 'AI powered' if ai else 'Symptom guide' }}</span><h1>Crop Doctor</h1>
+    <p class="muted">Tell us what you see. {% if ai %}Upload a clear photo of the affected leaf for an AI check.{% else %}Pick the symptoms and get likely causes and safe first steps.{% endif %}</p></div></div>
+  {% if not ai %}<p class="tool-banner"><i class="fa-solid fa-circle-info"></i> Photo diagnosis is switched off on this server. Add an <code>ANTHROPIC_API_KEY</code> to enable it; the symptom guide below works now.</p>{% endif %}
+  <div class="tool-layout">
+    <form id="cdForm" class="checkout-card" novalidate>
+      <div class="field"><label for="cdPhoto">Photo of the affected leaf / plant {% if not ai %}(needs AI mode){% endif %}</label>
+        <label class="drop" for="cdPhoto" id="cdDrop"><i class="fa-solid fa-camera"></i><span id="cdDropText">Tap to take or choose a photo (JPG, PNG, WebP, up to 4 MB)</span>
+          <img id="cdPreview" alt="Selected plant photo" hidden></label>
+        <input id="cdPhoto" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden></div>
+      <div class="field"><label for="cdCrop">Crop</label><select id="cdCrop"><option value="">Select crop</option>{% for c in crops %}<option>{{ c }}</option>{% endfor %}</select></div>
+      <div class="field"><label>What do you see?</label><div class="sym-grid">{% for k, label in symptoms.items() %}<label class="sym"><input type="checkbox" value="{{ k }}"><span>{{ label }}</span></label>{% endfor %}</div></div>
+      <div class="field"><label for="cdNote">Anything else? (optional)</label><textarea id="cdNote" rows="2" maxlength="300" placeholder="Since when, which part of the field, recent weather or sprays…"></textarea></div>
+      <p class="form-error" id="cdError" role="alert" hidden></p>
+      <button class="btn btn-primary btn-lg" id="cdGo" type="submit"><i class="fa-solid fa-stethoscope"></i> Check my crop</button>
+      <p class="track-note">Guidance only, not a lab diagnosis. For serious or spreading problems, contact your local Krishi Vigyan Kendra (KVK) or agriculture officer. Photos are analysed in memory and not stored.</p>
+    </form>
+    <div id="cdResult" class="cd-result" aria-live="polite"><div class="cd-empty"><i class="fa-solid fa-leaf"></i><p>Your result will appear here.</p></div></div>
+  </div>
+</section>
+{% endblock %}
+{% block js %}<script src="{{ url_for('static', filename='js/cropdoctor.js') }}"></script>{% endblock %}

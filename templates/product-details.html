@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb, product_grid %}
+{% block title %}{{ p.name }} | AgroConnect{% endblock %}
+{% block description %}Buy quality {{ p.name|lower }} from {{ p.seller }} on AgroConnect. {{ (p.description or '')[:110] }}{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Shop', url_for('products.shop')), (p.category, url_for('products.shop', category=p.category_slug)), (p.name, None)]) }}
+<section class="container pd" data-pid="{{ p.id }}" data-stock="{{ p.stock }}">
+  <div class="pd-gallery">
+    <div class="pd-main"><img id="mainImage" src="{{ gallery[0] }}" alt="{{ p.name }} – product photo">{% if p.discount %}<span class="badge-discount">{{ p.discount }}% OFF</span>{% endif %}</div>
+    <div class="pd-thumbs" role="list">
+      {% for g in gallery %}<button type="button" class="thumb {{ 'active' if loop.first }}" data-src="{{ g }}" aria-label="View image {{ loop.index }}"><img src="{{ g }}" alt="" loading="lazy"></button>{% endfor %}
+    </div>
+  </div>
+  <div class="pd-info">
+    {% if p.status != 'approved' %}<div class="flash flash-error">This product is {{ p.status }} and not visible to customers.</div>{% endif %}
+    <span class="tag">{{ p.category }}</span>
+    <h1>{{ p.name }}</h1>
+    <div class="rating-row"><span class="stars" data-stars="{{ p.rating }}"></span><strong>{{ p.rating }}</strong><a href="#reviews" data-tab-link="reviews">{{ p.reviews_count }} reviews</a></div>
+    <p class="seller-line">Sold by <a href="{{ url_for('products.shop', q=p.seller) }}">{{ p.seller }}</a> {% if p.seller_verified %}<span class="verified"><i class="fa-solid fa-circle-check"></i> Verified</span>{% endif %}</p>
+    <div class="price-block"><span class="price">{{ pd.sale_price|inr }}</span>{% if p.discount %}<span class="old">{{ p.price|inr }}</span><span class="save">Save {{ p.discount }}%</span>{% endif %}</div>
+    <p class="stock {{ 'in' if p.stock > 10 else 'low' if p.stock > 0 else 'out' }}">
+      {% if p.stock > 10 %}<i class="fa-solid fa-circle-check"></i> In stock{% elif p.stock > 0 %}<i class="fa-solid fa-triangle-exclamation"></i> Only {{ p.stock }} left{% else %}<i class="fa-solid fa-circle-xmark"></i> Out of stock{% endif %}</p>
+    <p class="pd-short">{{ p.description }}</p>
+    <div class="buy-row">
+      <div class="qty" role="group" aria-label="Quantity"><button type="button" id="qtyMinus" aria-label="Decrease quantity">−</button><input id="qtyInput" type="number" value="1" min="1" max="{{ p.stock }}" aria-label="Quantity"><button type="button" id="qtyPlus" aria-label="Increase quantity">+</button></div>
+      <button class="btn btn-primary btn-lg" id="addToCartBtn" {{ 'disabled' if p.stock <= 0 }}><i class="fa-solid fa-cart-plus"></i> Add to Cart</button>
+      <button class="btn btn-dark btn-lg" id="buyNowBtn" {{ 'disabled' if p.stock <= 0 }}>Buy Now</button>
+      <button class="btn btn-outline btn-lg wish-text" data-wish="{{ p.id }}" data-name="{{ p.name }}"><i class="fa-regular fa-heart"></i> Wishlist</button>
+    </div>
+    <div class="delivery-box">
+      <h3><i class="fa-solid fa-truck-fast"></i> Delivery information</h3>
+      <form id="pinForm" class="pin-form"><label class="sr-only" for="pin">Pincode</label><input id="pin" inputmode="numeric" maxlength="6" placeholder="Enter 6-digit pincode"><button class="btn btn-outline" type="submit">Check Delivery</button></form>
+      <p id="pinResult" role="status"></p>
+    </div>
+  </div>
+</section>
+
+<section class="container pd-tabs">
+  <div class="tab-list" role="tablist">
+    {% for key, label in [('description','Description'),('specs','Specifications'),('reviews','Reviews'),('seller','Seller Information'),('shipping','Shipping & Returns')] %}
+    <button role="tab" class="tab {{ 'active' if loop.first }}" data-tab="{{ key }}" aria-selected="{{ 'true' if loop.first else 'false' }}">{{ label }}{% if key == 'reviews' %} ({{ p.reviews_count }}){% endif %}</button>{% endfor %}
+  </div>
+  <div class="tab-panel active" id="tab-description" role="tabpanel"><p>{{ p.description }}</p><p>Brand: <strong>{{ p.brand or 'Generic' }}</strong>{% if p.organic %} · <span class="tag">Organic</span>{% endif %}</p></div>
+  <div class="tab-panel" id="tab-specs" role="tabpanel">
+    {% if specs %}<table class="spec-table"><tbody>{% for k, v in specs %}<tr><th>{{ k }}</th><td>{{ v.strip() }}</td></tr>{% endfor %}</tbody></table>{% else %}<p>No specifications listed.</p>{% endif %}</div>
+  <div class="tab-panel" id="tab-reviews" role="tabpanel">
+    <div class="review-summary">
+      <div class="big-rating"><strong id="avgRating">{{ p.rating }}</strong><span class="stars" data-stars="{{ p.rating }}"></span><small><span id="reviewCount">{{ p.reviews_count }}</span> reviews</small></div>
+      <div class="review-form-wrap">
+        <h3>Write a review</h3>
+        {% if current_user %}
+        <form id="reviewForm" novalidate>
+          <div class="star-input" role="radiogroup" aria-label="Rating">{% for i in range(5, 0, -1) %}<input type="radio" name="rating" id="st{{ i }}" value="{{ i }}"><label for="st{{ i }}" title="{{ i }} stars"><i class="fa-solid fa-star"></i></label>{% endfor %}</div>
+          <label for="rvTitle">Review title</label><input id="rvTitle" name="title" maxlength="100" required>
+          <label for="rvBody">Your review</label><textarea id="rvBody" name="body" rows="3" maxlength="1000" required></textarea>
+          <button class="btn btn-primary" type="submit">Submit Review</button>
+        </form>
+        {% else %}<p><a href="{{ url_for('auth.login', next=request.path) }}">Log in</a> to write a review.</p>{% endif %}
+      </div>
+    </div>
+    <div id="reviewList" class="review-list">
+      {% for r in reviews %}
+      <article class="review"><div class="review-top"><strong>{{ r.name }}</strong><span class="stars" data-stars="{{ r.rating }}"></span><time>{{ r.created_at|date }}</time></div><h4>{{ r.title }}</h4><p>{{ r.body }}</p></article>
+      {% else %}<p id="noReviews" class="muted">No written reviews yet. Be the first to review this product.</p>{% endfor %}
+    </div>
+  </div>
+  <div class="tab-panel" id="tab-seller" role="tabpanel">
+    <h3>{{ seller.business_name }} {% if seller.verified %}<span class="verified"><i class="fa-solid fa-circle-check"></i> Verified</span>{% endif %}</h3>
+    <p>{{ seller.bio or 'Trusted supplier of agricultural inputs.' }}</p><p><i class="fa-solid fa-location-dot"></i> {{ seller.location }} · {{ seller_count }} products listed</p>
+    <a class="btn btn-outline" href="{{ url_for('products.shop', q=seller.business_name) }}">View all products from this seller</a></div>
+  <div class="tab-panel" id="tab-shipping" role="tabpanel">
+    <ul class="plain-list"><li>Free delivery on orders above ₹{{ cfg.FREE_DELIVERY_ABOVE }}; ₹{{ cfg.DELIVERY_FEE }} otherwise.</li><li>Standard delivery within 3–5 business days across serviceable pincodes.</li><li>Unopened, undamaged products can be returned within 7 days of delivery.</li><li>Seeds, pesticides and perishable items are non-returnable once opened.</li></ul></div>
+</section>
+
+<section class="section alt"><div class="container">
+  <div class="section-head"><h2>Related Products</h2></div>
+  {{ product_grid('data-category="' ~ p.category_slug ~ '" data-exclude="' ~ p.id ~ '" data-limit="4"', 4) }}
+</div></section>
+{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}Manage Rentals – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Equipment Rental', url_for('rentals.rentals')), ('Manage', None)]) }}
+<section class="container page-block"><div class="section-head"><h1>Manage Rental Equipment</h1></div>
+  <div class="tool-layout">
+    <form class="checkout-card" method="post" action="{{ url_for('rentals.add_item') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><h2>List equipment</h2>
+      <div class="field"><label for="sName">Name</label><input id="sName" name="name" required maxlength="80" placeholder="Power Tiller 7 HP"></div>
+      <div class="field-row"><div class="field"><label for="sKind">Type</label><select id="sKind" name="kind">{% for k in kinds %}<option>{{ k }}</option>{% endfor %}</select></div>
+        <div class="field"><label for="sUnits">Units available</label><input id="sUnits" name="units" type="number" min="1" max="50" value="1"></div></div>
+      <div class="field-row"><div class="field"><label for="sPrice">Rent per day (₹)</label><input id="sPrice" name="price_per_day" type="number" min="1" required></div>
+        <div class="field"><label for="sDep">Deposit (₹)</label><input id="sDep" name="deposit" type="number" min="0" value="0"></div></div>
+      <div class="field-row"><div class="field"><label for="sDist">District</label><input id="sDist" name="district" required></div><div class="field"><label for="sState">State</label><input id="sState" name="state" required></div></div>
+      <div class="field"><label for="sDesc">Description</label><textarea id="sDesc" name="description" rows="3" maxlength="400"></textarea></div>
+      <button class="btn btn-primary" type="submit">List for rent</button></form>
+    <div>
+      <div class="checkout-card"><h2>Booking requests</h2>
+        {% if bookings %}<div class="table-wrap"><table class="table"><thead><tr><th>Equipment</th><th>Customer</th><th>Dates</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>
+        {% for b in bookings %}<tr><td>{{ b.item_name }}</td><td>{{ b.customer_name }}<br><small class="muted">{{ b.phone }}</small></td><td>{{ b.start_date }} → {{ b.end_date }}</td><td>₹{{ '{:,.0f}'.format(b.total) }}</td>
+          <td><span class="status status-{{ b.status|lower }}" id="bs{{ b.id }}">{{ b.status }}</span></td>
+          <td class="nowrap">{% if b.status == 'Requested' %}<button class="btn btn-primary btn-sm" data-set="{{ b.id }}:Confirmed">Confirm</button> <button class="btn btn-outline btn-sm" data-set="{{ b.id }}:Rejected">Reject</button>
+            {% elif b.status == 'Confirmed' %}<button class="btn btn-outline btn-sm" data-set="{{ b.id }}:Completed">Mark returned</button>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+        {% else %}<p class="muted">No bookings yet.</p>{% endif %}</div>
+      <div class="checkout-card mt"><h2>Your equipment</h2>
+        {% for r in items %}<div class="rent-row slim"><img src="{{ img(r.image) }}" alt="{{ r.name }}"><div><b>{{ r.name }}</b><br><small class="muted">₹{{ '{:,.0f}'.format(r.price_per_day) }}/day · {{ r.units }} unit(s) · {{ r.district }}</small></div>
+          <form method="post" action="{{ url_for('rentals.toggle_item', iid=r.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-outline btn-sm">{{ 'Hide' if r.active else 'Show' }}</button></form></div>
+        {% else %}<p class="muted">Nothing listed yet.</p>{% endfor %}</div>
+    </div></div></section>
+{% endblock %}
+{% block js %}<script src="{{ url_for('static', filename='js/rentals.js') }}"></script>{% endblock %}

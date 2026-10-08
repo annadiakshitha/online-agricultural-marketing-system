@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb, product_grid %}
+{% block title %}Shop Agricultural Products – AgroConnect{% endblock %}
+{% block description %}Browse seeds, fertilizers, crop protection, tools, irrigation and machinery from verified Indian sellers.{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Shop', None)]) }}
+<section class="container shop-head">
+  <h1>{% if account_type == 'farmer' %}Farm Inputs & Equipment{% elif account_type == 'customer' %}Fresh Farm Products{% elif account_type == 'seller' %}My Listed Products{% else %}All Agricultural Products{% endif %}</h1>
+  <form class="shop-search" id="shopSearchForm" role="search" onsubmit="return false">
+    <i class="fa-solid fa-magnifying-glass"></i><label class="sr-only" for="shopSearch">Search products</label>
+    <input id="shopSearch" type="search" placeholder="Search by product, category, seller or tag" autocomplete="off">
+  </form>
+</section>
+<div class="container shop-layout">
+  <aside class="filters" id="filters" aria-label="Product filters">
+    <div class="filters-head"><h2>Filters</h2><button class="link-btn" id="resetFilters" type="button">Reset</button><button class="icon-btn close-filters" id="closeFilters" aria-label="Close filters"><i class="fa-solid fa-xmark"></i></button></div>
+    <fieldset><legend>Category</legend>
+      <label class="check"><input type="radio" name="category" value="" checked> All categories</label>
+      {% for c in cats %}<label class="check"><input type="radio" name="category" value="{{ c.slug }}"> {{ c.name }} <small>({{ c.n }})</small></label>{% endfor %}
+    </fieldset>
+    <fieldset><legend>Price Range (₹)</legend>
+      <div class="price-inputs"><input type="number" id="minPrice" min="0" placeholder="Min" aria-label="Minimum price"><span>–</span><input type="number" id="maxPrice" min="0" placeholder="Max" aria-label="Maximum price"></div>
+    </fieldset>
+    <fieldset><legend>Brand</legend><select id="brandFilter" aria-label="Brand"><option value="">All brands</option>{% for b in brands %}<option>{{ b.brand }}</option>{% endfor %}</select></fieldset>
+    <fieldset><legend>Seller</legend><select id="sellerFilter" aria-label="Seller"><option value="">All sellers</option>{% for s in sellers %}<option>{{ s.business_name }}</option>{% endfor %}</select></fieldset>
+    <fieldset><legend>Rating</legend>
+      {% for r in [4, 3, 0] %}<label class="check"><input type="radio" name="rating" value="{{ r }}" {{ 'checked' if r == 0 }}> {% if r %}{{ r }}★ &amp; up{% else %}Any rating{% endif %}</label>{% endfor %}
+    </fieldset>
+    <fieldset><legend>Availability</legend><label class="check"><input type="checkbox" id="inStock"> In stock only</label></fieldset>
+    <fieldset><legend>Preferences</legend>
+      <label class="check"><input type="checkbox" id="organicOnly"> Organic products</label>
+      <label class="check"><input type="checkbox" id="discountOnly"> On discount (15%+)</label></fieldset>
+    <button class="btn btn-primary btn-block apply-mobile" id="applyFilters" type="button">Show results</button>
+  </aside>
+  <section class="shop-results" aria-live="polite">
+    <div class="results-bar">
+      <button class="btn btn-outline btn-sm filter-open" id="openFilters" type="button"><i class="fa-solid fa-sliders"></i> Filters</button>
+      <p id="resultCount" class="result-count">Loading products…</p>
+      <label class="sort"><span class="sr-only">Sort by</span>
+        <select id="sortBy"><option value="featured">Featured</option><option value="price-asc">Price: Low to High</option><option value="price-desc">Price: High to Low</option><option value="rating">Highest Rated</option><option value="newest">Newest</option><option value="discount">Biggest Discount</option></select></label>
+    </div>
+    {{ product_grid('data-shop="1"', 8) }}
+    <div id="noResults" class="empty-state" hidden><i class="fa-solid fa-seedling"></i><h3>No products found.</h3><p>Try a different keyword or adjust the filters.</p><button class="btn btn-primary" id="clearSearch" type="button">Clear Search</button></div>
+    <nav class="pagination" id="pagination" aria-label="Pagination"></nav>
+  </section>
+</div>
+<div class="backdrop" id="filterBackdrop"></div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}{{ it.name }} for Rent | AgroConnect{% endblock %}
+{% block description %}Rent {{ it.name|lower }} in {{ it.district }}, {{ it.state }} from {{ it.business_name }} on AgroConnect.{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Equipment Rental', url_for('rentals.rentals')), (it.name, None)]) }}
+<section class="container page-block"><div class="tool-layout" id="rent" data-id="{{ it.id }}" data-day="{{ it.price_per_day }}" data-dep="{{ it.deposit }}" data-max="{{ max_days }}">
+  <div>
+    <div class="pd-main" style="margin-bottom:16px"><img src="{{ img(it.image) }}" alt="{{ it.name }}" style="width:100%;height:auto;max-height:420px;object-fit:cover"></div>
+    <span class="tag">{{ it.kind }}</span><h1 style="margin:10px 0 6px">{{ it.name }}</h1>
+    <p class="muted"><i class="fa-solid fa-location-dot"></i> {{ it.district }}, {{ it.state }} · Owner: {{ it.business_name }} · {{ it.units }} unit{{ 's' if it.units != 1 }}</p>
+    <p>{{ it.description }}</p>
+    <ul class="plain-list"><li>Rent <b>₹{{ '{:,.0f}'.format(it.price_per_day) }}</b> per day, up to {{ max_days }} days at a time</li><li>Refundable deposit <b>₹{{ '{:,.0f}'.format(it.deposit) }}</b> returned after safe return</li><li>Pay the owner directly at pickup or delivery</li></ul>
+  </div>
+  <form class="checkout-card" id="rentForm" novalidate>
+    <h2>Book this equipment</h2>
+    <div class="field-row"><div class="field"><label for="rStart">From</label><input id="rStart" type="date" min="{{ today }}" required></div>
+      <div class="field"><label for="rEnd">To</label><input id="rEnd" type="date" min="{{ today }}" required></div></div>
+    <div id="rQuote" class="quote" aria-live="polite">Pick your dates to see the price and availability.</div>
+    {% if current_user %}
+    <div class="field"><label for="rName">Your name</label><input id="rName" value="{{ current_user['name'] }}" required></div>
+    <div class="field"><label for="rPhone">Mobile number</label><input id="rPhone" value="{{ current_user['phone'] or '' }}" inputmode="tel" required></div>
+    <div class="field"><label for="rAddr">Where is it needed? (village, district)</label><input id="rAddr" required></div>
+    <div class="field"><label for="rNote">Note (optional)</label><input id="rNote" maxlength="200" placeholder="Operator needed, delivery time…"></div>
+    <p class="form-error" id="rError" role="alert" hidden></p>
+    <button class="btn btn-primary btn-lg btn-block" id="rGo" type="submit" disabled>Request booking</button>
+    {% else %}<a class="btn btn-primary btn-lg btn-block" href="{{ url_for('auth.login', next=request.path) }}">Log in to book</a>{% endif %}
+  </form></div></section>
+{% endblock %}
+{% block js %}<script src="{{ url_for('static', filename='js/rentals.js') }}"></script>{% endblock %}

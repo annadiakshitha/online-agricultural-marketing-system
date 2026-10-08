@@ -1,0 +1,43 @@
+/* Responsive breakpoints: 1280 / 1024 / 768 / 480 */
+@media (max-width:1280px){.container{padding:0 20px}.hero-content h1{font-size:2.9rem}}
+@media (max-width:1100px){
+  .product-grid{grid-template-columns:repeat(3,1fr)}.category-grid{grid-template-columns:repeat(3,1fr)}.blog-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:repeat(3,1fr)}.shop-results .product-grid{grid-template-columns:repeat(2,1fr)}
+  .pd{gap:28px}.pd-main img{height:440px}
+}
+@media (max-width:1024px){
+  .menu-toggle{display:inline-flex}
+  .nav-links{position:fixed;top:var(--nav-h);left:0;right:0;background:#fff;flex-direction:column;align-items:stretch;padding:12px 20px 20px;border-bottom:1px solid var(--border);box-shadow:var(--shadow-lg);transform:translateY(-120%);transition:transform .3s;z-index:-1}
+  .nav-links.open{transform:none}.nav-links a{padding:13px 12px}
+  .shop-layout{grid-template-columns:1fr}
+  .filters{position:fixed;left:0;top:0;bottom:0;width:min(320px,88vw);z-index:160;border-radius:0;transform:translateX(-102%);transition:transform .3s;max-height:none}.filters.open{transform:none}
+  .close-filters,.apply-mobile,.filter-open{display:inline-flex}.filters-head{gap:10px}.filters-head .link-btn{margin-left:auto}
+  .shop-results .product-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:900px){
+  .shop-results .product-grid{grid-template-columns:repeat(2,1fr)}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}.feature-grid,.testimonial-grid{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:repeat(2,1fr)}
+  .sell-banner,.two-col,.pd{grid-template-columns:1fr}.sell-banner img{min-height:240px;max-height:300px}.sell-banner>div{padding:32px}
+  .hero{min-height:520px}.hero-content h1{font-size:2.4rem}.deal-banner{padding:48px 28px}.deal-banner h2,.deal-banner h1{font-size:2rem}
+  .review-summary{grid-template-columns:1fr;gap:20px}.modal-box.qv{grid-template-columns:1fr}.qv img{min-height:220px;max-height:260px}
+}
+@media (max-width:768px){
+  body{padding-bottom:64px}
+  .product-grid,.category-grid{grid-template-columns:repeat(2,1fr);gap:14px}.product-image{height:180px}.category-image{height:160px}
+  .section{padding:48px 0}.section-head h2,.section-head h1{font-size:1.5rem}
+  .footer-grid{grid-template-columns:repeat(2,1fr)}.footer-grid>div:first-child{grid-column:1/-1}
+  .bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);z-index:120;justify-content:space-around;padding:6px 0 max(6px,env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(0,0,0,.06)}
+  .bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.68rem;color:var(--muted);font-weight:600;position:relative;padding:4px}.bottom-nav a i{font-size:1.15rem}.bottom-nav a.active{color:var(--primary)}
+  .bottom-nav .badge{top:-2px;right:calc(50% - 22px)}
+  .toast-wrap{left:12px;right:12px;top:auto;bottom:76px}.toast{max-width:none}
+  .nav-actions .icon-btn[aria-label=Cart],.nav-actions .icon-btn[aria-label=Wishlist]{display:none}.acc-name{display:none}.account-btn{padding:0;width:42px}
+  .hero-content h1{font-size:2rem}.stats strong{font-size:1.8rem}.newsletter .container{flex-direction:column;align-items:stretch}.newsletter form{max-width:none}
+  .pd-main img{height:340px}.buy-row .btn-lg{flex:1}.page-hero{padding:60px 0}.page-hero h1{font-size:1.8rem}
+}
+@media (max-width:480px){
+  .container{padding:0 14px}.feature-grid,.testimonial-grid,.steps,.blog-grid{grid-template-columns:1fr}
+  .stats-grid{gap:14px}.hero{min-height:480px}.hero-content h1{font-size:1.75rem}.hero-content p{font-size:1rem}.hero-actions .btn{flex:1}
+  .product-card .pc-body{padding:12px}.pc-name{font-size:.92rem}.pc-price strong{font-size:1.05rem}.product-card .btn{font-size:.82rem;padding:9px 8px}.quick-btn{display:none}
+  .brand span{font-size:1.1rem}.flash{width:calc(100% - 28px)}.modal-box{padding:20px}.sort select{min-width:0}.results-bar .sort{flex:1}
+}
+@media (max-width:380px){.product-grid{grid-template-columns:1fr}.shop-results .product-grid{grid-template-columns:1fr}.product-image{height:220px}}

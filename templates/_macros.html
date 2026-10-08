@@ -1,0 +1,17 @@
+{% macro breadcrumb(items) %}
+<nav class="breadcrumb" aria-label="Breadcrumb"><div class="container">
+  {% for label, link in items %}{% if link %}<a href="{{ link }}">{{ label }}</a><i class="fa-solid fa-chevron-right"></i>{% else %}<span aria-current="page">{{ label }}</span>{% endif %}{% endfor %}
+</div></nav>
+{% endmacro %}
+
+{% macro product_grid(attrs='', count=8) %}
+<div class="product-grid" data-product-grid {{ attrs|safe }}>
+  {% for _ in range(count) %}<div class="skeleton-card" aria-hidden="true"><div class="sk sk-img"></div><div class="sk sk-line"></div><div class="sk sk-line short"></div><div class="sk sk-line"></div></div>{% endfor %}
+</div>
+{% endmacro %}
+
+{% macro status_badge(status) %}<span class="status status-{{ status|lower|replace(' ', '-') }}">{{ status }}</span>{% endmacro %}
+
+{% macro timeline(status) %}
+<ol class="timeline" data-timeline data-status="{{ status }}" aria-label="Order tracking"></ol>
+{% endmacro %}

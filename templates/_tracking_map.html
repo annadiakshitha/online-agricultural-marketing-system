@@ -1,0 +1,15 @@
+<div class="checkout-card mt track-card" id="trackCard">
+  <div class="track-head">
+    <h2><i class="fa-solid fa-location-dot"></i> Track on Map</h2>
+    <button type="button" id="trackLocate" class="btn btn-outline btn-sm"><i class="fa-solid fa-crosshairs"></i> My location</button>
+  </div>
+  <div class="track-stats" id="trackStats" aria-live="polite">
+    <div><small>Status</small><strong id="tkStatus">–</strong></div>
+    <div><small>Now at</small><strong id="tkNow">–</strong></div>
+    <div><small>Distance</small><strong id="tkDist">–</strong></div>
+    <div><small id="tkEtaLabel">Estimated delivery</small><strong id="tkEta">–</strong></div>
+  </div>
+  <div id="trackMap" class="track-map" data-order="{{ o.id }}" role="application" aria-label="Map showing the route and current position of your order"></div>
+  <div id="trackFallback" class="track-fallback" hidden>The map could not load (check your internet connection). Route: <span id="tkRoute"></span></div>
+  <p class="track-note" id="tkNote"></p>
+</div>

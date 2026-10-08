@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}Weather & Farm Advisory – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Farmer Tools', url_for('tools.hub')), ('Weather', None)]) }}
+<section class="container page-block" id="wx" data-lat="{{ default.lat }}" data-lng="{{ default.lng }}" data-name="{{ default.name }}">
+  <div class="section-head"><div><span class="eyebrow">7-day forecast</span><h1>Weather &amp; Farm Advisory</h1><p class="muted" id="wxPlace">{{ default.name }}</p></div></div>
+  <form id="wxSearch" class="wx-search"><input id="wxQ" placeholder="Search your village or town" aria-label="Search location" autocomplete="off"><button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+    <button class="btn btn-outline" type="button" id="wxGeo"><i class="fa-solid fa-crosshairs"></i> Use my location</button></form>
+  <div id="wxResults" class="wx-results" hidden></div>
+  <div id="wxBody"><div class="sk" style="height:180px;border-radius:16px"></div></div>
+  <p class="track-note">Forecast data: Open-Meteo (needs an internet connection). Advisories are general rules of thumb; follow product labels and local guidance.</p>
+</section>
+{% endblock %}
+{% block js %}<script src="{{ url_for('static', filename='js/wxcore.js') }}"></script><script src="{{ url_for('static', filename='js/weather.js') }}"></script>{% endblock %}

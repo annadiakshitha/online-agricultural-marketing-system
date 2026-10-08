@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}Fertilizer Calculator – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Farmer Tools', url_for('tools.hub')), ('Fertilizer Calculator', None)]) }}
+<section class="container page-block">
+  <div class="section-head"><div><span class="eyebrow">Plan your inputs</span><h1>Fertilizer Calculator</h1><p class="muted">How much urea, DAP and potash does your field need?</p></div></div>
+  <div class="tool-layout">
+    <form id="fcForm" class="checkout-card">
+      <div class="field"><label for="fcCrop">Crop</label><select id="fcCrop">{% for k, c in crops.items() %}<option value="{{ k }}">{{ c.name }}</option>{% endfor %}</select></div>
+      <div class="field-row"><div class="field"><label for="fcSize">Field size</label><input id="fcSize" type="number" min="0.1" step="0.1" value="1" inputmode="decimal"></div>
+        <div class="field"><label for="fcUnit">Unit</label><select id="fcUnit"><option value="acre">Acres</option><option value="hectare">Hectares</option></select></div></div>
+      <button class="btn btn-primary btn-lg" type="submit"><i class="fa-solid fa-calculator"></i> Calculate</button>
+      <p class="form-error" id="fcError" role="alert" hidden></p>
+    </form>
+    <div id="fcResult" class="cd-result"><div class="cd-empty"><i class="fa-solid fa-seedling"></i><p>Choose a crop and field size.</p></div></div>
+  </div>
+</section>
+{% endblock %}
+{% block js %}<script src="{{ url_for('static', filename='js/fertcalc.js') }}"></script>{% endblock %}

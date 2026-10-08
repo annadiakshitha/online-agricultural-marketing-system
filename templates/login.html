@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Login – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">{% endblock %}
+{% block content %}
+<section class="auth">
+  <div class="auth-side" style="--bg: url('{{ img('hero/hero-farmer-field.jpg') }}')"><div><h2>Welcome back to AgroConnect</h2><p>Order inputs, track deliveries and manage your farm store in one place.</p></div></div>
+  <div class="auth-card">
+    <h1>Login</h1><p class="muted">Enter your credentials to access your account.</p>
+    <form method="post" id="loginForm" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="next" value="{{ request.args.get('next','') }}">
+      <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" value="{{ email or '' }}" required autocomplete="email"></div>
+      <div class="field"><label for="password">Password</label><div class="pw"><input id="password" name="password" type="password" required autocomplete="current-password"><button type="button" class="pw-toggle" aria-label="Show password"><i class="fa-regular fa-eye"></i></button></div></div>
+      <button class="btn btn-primary btn-block btn-lg" type="submit">Login</button>
+    </form>
+    <p class="auth-alt">New to AgroConnect? <a href="{{ url_for('auth.register') }}">Create an account</a></p>
+    <div class="demo-box"><strong>Demo accounts</strong>
+      <button type="button" class="demo-fill" data-email="customer@agroconnect.com" data-pass="customer123">Customer</button>
+      <button type="button" class="demo-fill" data-email="farmer@agroconnect.com" data-pass="farmer123">Farmer</button>
+      <button type="button" class="demo-fill" data-email="seller@agroconnect.com" data-pass="seller123">Seller</button>
+      <button type="button" class="demo-fill" data-email="admin@agroconnect.com" data-pass="admin123">Admin</button></div>
+  </div>
+</section>
+{% endblock %}
+{% block footer %}{% endblock %}
+{% block js %}<script src="{{ url_for('static', filename='js/auth.js') }}"></script>{% endblock %}

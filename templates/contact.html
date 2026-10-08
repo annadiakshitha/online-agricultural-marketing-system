@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}Contact & Help – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Contact', None)]) }}
+<section class="section"><div class="container two-col">
+  <div>
+    <h1>Contact us</h1><p>Questions about an order, a product or selling on AgroConnect? Send us a message.</p>
+    <form method="post" class="card-form" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="field"><label for="name">Name *</label><input id="name" name="name" required></div>
+      <div class="field"><label for="email">Email *</label><input id="email" name="email" type="email" required></div>
+      <div class="field"><label for="message">Message *</label><textarea id="message" name="message" rows="5" required></textarea></div>
+      <button class="btn btn-primary" type="submit">Send message</button>
+    </form>
+  </div>
+  <div class="info-stack">
+    <div id="help"><h3><i class="fa-solid fa-circle-question"></i> Help Center</h3><p>Browse your orders under My Orders, or write to us using the form.</p></div>
+    <div id="shipping"><h3><i class="fa-solid fa-truck"></i> Shipping</h3><p>3–5 business days on most pincodes. Free delivery above ₹{{ cfg.FREE_DELIVERY_ABOVE }}.</p></div>
+    <div id="returns"><h3><i class="fa-solid fa-rotate-left"></i> Returns</h3><p>Unopened products can be returned within 7 days of delivery.</p></div>
+    <div id="privacy"><h3><i class="fa-solid fa-user-shield"></i> Privacy Policy</h3><p>We store only the details needed to process your orders. Passwords are hashed and card details are never stored. We do not sell personal data.</p></div>
+    <div id="terms"><h3><i class="fa-solid fa-file-contract"></i> Terms</h3><p>Sellers are responsible for the accuracy of their listings. AgroConnect approves products before they go live and may remove listings that violate our guidelines.</p></div>
+    <div id="careers"><h3><i class="fa-solid fa-briefcase"></i> Careers</h3><p>We hire agronomists, logistics and support staff. Email careers@agroconnect.example.</p></div>
+    <p><i class="fa-solid fa-phone"></i> 1800-123-4567 (Mon–Sat, 9am–6pm)<br><i class="fa-solid fa-envelope"></i> support@agroconnect.example</p>
+  </div>
+</div></section>
+{% endblock %}

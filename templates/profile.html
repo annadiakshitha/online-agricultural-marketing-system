@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb, status_badge %}
+{% block title %}My Profile – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('My Account', None)]) }}
+<section class="container dash-wrap">
+  <aside class="dash-side" aria-label="Account menu">
+    <div class="side-user"><img src="{{ img(current_user['photo']) if current_user['photo'] else url_for('static', filename='images/logo/logo.svg') }}" alt="Profile photo" id="sidePhoto"><strong>{{ current_user['name'] }}</strong><small>{{ current_user['role']|capitalize }}</small></div>
+    <nav>
+      <button class="side-link active" data-panel="p-profile"><i class="fa-regular fa-id-card"></i> Profile</button>
+      <a class="side-link" href="{{ url_for('orders.orders') }}"><i class="fa-solid fa-box"></i> My Orders</a>
+      <a class="side-link" href="{{ url_for('main.wishlist') }}"><i class="fa-regular fa-heart"></i> Wishlist</a>
+      <button class="side-link" data-panel="p-addresses"><i class="fa-solid fa-location-dot"></i> Addresses</button>
+      <button class="side-link" data-panel="p-payments"><i class="fa-regular fa-credit-card"></i> Payments</button>
+      <a class="side-link" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+    </nav>
+  </aside>
+  <div class="dash-main">
+    <div class="panel active" id="p-profile">
+      <h1>Profile</h1>
+      <div class="card">
+        <form id="profileForm" class="form-grid" novalidate>
+          <div class="field full avatar-row"><img src="{{ img(current_user['photo']) if current_user['photo'] else url_for('static', filename='images/logo/logo.svg') }}" alt="" id="avatarPreview"><div><label for="photoInput" class="btn btn-outline btn-sm">Change photo</label><input type="file" id="photoInput" accept=".jpg,.jpeg,.png,.webp" hidden><small class="muted">JPG, PNG or WEBP, max 4 MB</small></div></div>
+          <div class="field"><label for="pf_name">Full Name</label><input id="pf_name" value="{{ current_user['name'] }}" required></div>
+          <div class="field"><label for="pf_phone">Phone</label><input id="pf_phone" value="{{ current_user['phone'] or '' }}" required></div>
+          <div class="field full"><label for="pf_email">Email</label><input id="pf_email" value="{{ current_user['email'] }}" disabled></div>
+          <div class="field full"><button class="btn btn-primary" type="submit">Save changes</button></div>
+        </form>
+      </div>
+      <div class="card"><h2>Change password</h2>
+        <form id="pwForm" class="form-grid" novalidate>
+          <div class="field"><label for="pw_cur">Current password</label><input id="pw_cur" type="password" autocomplete="current-password"></div>
+          <div class="field"><label for="pw_new">New password</label><input id="pw_new" type="password" autocomplete="new-password"></div>
+          <div class="field full"><button class="btn btn-outline" type="submit">Update password</button></div></form></div>
+      <div class="card"><h2>Recent orders</h2>
+        {% for o in orders %}<div class="row-line"><a href="{{ url_for('orders.order_details', oid=o.id) }}">{{ o.order_number }}</a><span>{{ o.created_at|date }}</span><span>{{ o.total_amount|inr }}</span>{{ status_badge(o.status) }}</div>
+        {% else %}<p class="muted">No orders yet.</p>{% endfor %}</div>
+    </div>
+    <div class="panel" id="p-addresses">
+      <h1>Addresses</h1>
+      <div class="address-grid">
+        {% for a in addresses %}<div class="card address"><p>{{ a.line1 }}<br>{{ a.village }}, {{ a.district }}<br>{{ a.state }} - {{ a.pincode }}</p>{% if a.is_default %}<span class="tag">Default</span>{% endif %}<button class="link-btn danger" data-del-address="{{ a.id }}">Remove</button></div>
+        {% else %}<p class="muted">No saved addresses.</p>{% endfor %}
+      </div>
+      <div class="card"><h2>Add new address</h2>
+        <form id="addressForm" class="form-grid" novalidate>
+          <div class="field full"><label for="ad_line1">House / Flat</label><input id="ad_line1" required></div>
+          <div class="field"><label for="ad_village">Village / Town</label><input id="ad_village" required></div>
+          <div class="field"><label for="ad_district">District</label><input id="ad_district" required></div>
+          <div class="field"><label for="ad_state">State</label><input id="ad_state" required></div>
+          <div class="field"><label for="ad_pin">Pincode</label><input id="ad_pin" maxlength="6" inputmode="numeric" required></div>
+          <div class="field full"><button class="btn btn-primary" type="submit">Save address</button></div></form></div>
+    </div>
+    <div class="panel" id="p-payments">
+      <h1>Payments</h1>
+      <div class="card"><p class="muted">We accept Cash on Delivery, UPI and Credit/Debit cards. Card details are never stored on AgroConnect.</p></div>
+      <div class="card"><h2>Payment history</h2>
+        {% for p in payments %}<div class="row-line"><span>{{ p.order_number }}</span><span>{{ p.method }}</span><span>{{ p.amount|inr }}</span><span class="tag">{{ p.status }}</span></div>
+        {% else %}<p class="muted">No payments yet.</p>{% endfor %}</div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block js %}<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>{% endblock %}

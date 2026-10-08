@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}Checkout – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Cart', url_for('cart.cart')), ('Checkout', None)]) }}
+<section class="container page-block">
+  <h1>Checkout</h1>
+  <ol class="stepper" id="stepper">{% for s in ['Customer','Address','Payment','Review'] %}<li class="{{ 'active' if loop.first }}"><span>{{ loop.index }}</span>{{ s }}</li>{% endfor %}</ol>
+  <div class="cart-layout">
+    <form id="checkoutForm" class="checkout-card" novalidate>
+      <div class="step-panel active" data-step="1">
+        <h2>Customer Information</h2>
+        <div class="form-grid">
+          <div class="field"><label for="c_name">Full Name *</label><input id="c_name" value="{{ current_user['name'] }}" required autocomplete="name"></div>
+          <div class="field"><label for="c_phone">Mobile Number *</label><input id="c_phone" value="{{ current_user['phone'] or '' }}" inputmode="tel" placeholder="9876543210" required autocomplete="tel"></div>
+          <div class="field full"><label for="c_email">Email *</label><input id="c_email" type="email" value="{{ current_user['email'] }}" required autocomplete="email"></div>
+        </div>
+      </div>
+      <div class="step-panel" data-step="2">
+        <h2>Delivery Address</h2>
+        <div class="form-grid">
+          <div class="field full"><label for="a_line1">House / Flat *</label><input id="a_line1" value="{{ addr['line1'] if addr else '' }}" required></div>
+          <div class="field"><label for="a_village">Village / Town *</label><input id="a_village" value="{{ addr['village'] if addr else '' }}" required></div>
+          <div class="field"><label for="a_district">District *</label><input id="a_district" value="{{ addr['district'] if addr else '' }}" required></div>
+          <div class="field"><label for="a_state">State *</label>
+            <select id="a_state" required><option value="">Select state</option>
+              {% for s in ['Andhra Pradesh','Karnataka','Kerala','Maharashtra','Tamil Nadu','Telangana','Gujarat','Madhya Pradesh','Punjab','Rajasthan','Uttar Pradesh','Odisha','West Bengal','Haryana','Bihar'] %}<option {{ 'selected' if addr and addr['state'] == s }}>{{ s }}</option>{% endfor %}</select></div>
+          <div class="field"><label for="a_pin">Pincode *</label><input id="a_pin" inputmode="numeric" maxlength="6" value="{{ addr['pincode'] if addr else '' }}" required></div>
+        </div>
+      </div>
+      <div class="step-panel" data-step="3">
+        <h2>Payment</h2>
+        <div class="pay-options" role="radiogroup" aria-label="Payment method">
+          <label class="pay-opt"><input type="radio" name="pay" value="Cash on Delivery" checked><i class="fa-solid fa-money-bill-wave"></i><span><strong>Cash on Delivery</strong><small>Pay when your order arrives</small></span></label>
+          <label class="pay-opt"><input type="radio" name="pay" value="UPI"><i class="fa-solid fa-mobile-screen"></i><span><strong>UPI</strong><small>Google Pay, PhonePe, Paytm and more</small></span></label>
+          <label class="pay-opt"><input type="radio" name="pay" value="Credit/Debit Card"><i class="fa-regular fa-credit-card"></i><span><strong>Credit / Debit Card</strong><small>Visa, Mastercard, RuPay</small></span></label>
+        </div>
+        <div class="pay-extra" id="pay-UPI" hidden><div class="field"><label for="upi">UPI ID *</label><input id="upi" placeholder="name@okbank" autocomplete="off"></div></div>
+        <div class="pay-extra" id="pay-Card" hidden><div class="form-grid">
+          <div class="field full"><label for="cardNo">Card Number *</label><input id="cardNo" inputmode="numeric" placeholder="4111 1111 1111 1111" autocomplete="off"></div>
+          <div class="field"><label for="cardExp">Expiry (MM/YY) *</label><input id="cardExp" placeholder="08/29" maxlength="5" autocomplete="off"></div>
+          <div class="field"><label for="cardCvv">CVV *</label><input id="cardCvv" type="password" inputmode="numeric" maxlength="4" autocomplete="off"></div></div>
+          <p class="hint">This is a demo checkout. No real payment is processed and card numbers are never stored.</p></div>
+      </div>
+      <div class="step-panel" data-step="4">
+        <h2>Order Review</h2>
+        <div class="coupon-box" id="couponBox"><label for="couponCode"><i class="fa-solid fa-ticket"></i> Have a coupon?</label>
+          <div class="coupon-row"><input id="couponCode" placeholder="Enter code" autocomplete="off" maxlength="20" style="text-transform:uppercase"><button type="button" class="btn btn-outline" id="couponApply">Apply</button></div>
+          <p class="coupon-msg" id="couponMsg" role="status"></p><div class="coupon-offers" id="couponOffers"></div></div>
+        <div id="reviewBox"></div>
+      </div>
+      <p class="form-error" id="checkoutError" role="alert" hidden></p>
+      <div class="step-actions">
+        <button type="button" class="btn btn-outline" id="prevStep" hidden>Back</button>
+        <button type="button" class="btn btn-primary" id="nextStep">Continue</button>
+        <button type="submit" class="btn btn-primary" id="placeOrder" hidden>Place Order</button>
+      </div>
+    </form>
+    <aside class="summary" id="cartSummary" aria-label="Order summary"></aside>
+  </div>
+</section>
+{% endblock %}
+{% block js %}<script src="{{ url_for('static', filename='js/coupon.js') }}" defer></script><script src="{{ url_for('static', filename='js/checkout.js') }}"></script>{% endblock %}

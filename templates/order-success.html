@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Order Placed – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">{% endblock %}
+{% block content %}
+<section class="container success-wrap">
+  <div class="success-card fade-in">
+    <span class="success-icon"><i class="fa-solid fa-check"></i></span>
+    <h1>Order Placed Successfully!</h1>
+    <p>Thank you, {{ o.customer_name }}. A confirmation has been recorded for your order.</p>
+    <dl class="success-meta"><div><dt>Order ID</dt><dd>{{ o.order_number }}</dd></div><div><dt>Total</dt><dd>{{ o.total_amount|inr }}</dd></div><div><dt>Payment</dt><dd>{{ o.payment_method }}</dd></div><div><dt>Expected Delivery</dt><dd>3–5 Business Days</dd></div></dl>
+    <div class="hero-actions center"><a class="btn btn-primary btn-lg" href="{{ url_for('orders.order_details', oid=o.id) }}">Track Order</a><a class="btn btn-outline btn-lg" href="{{ url_for('products.shop') }}">Continue Shopping</a></div>
+  </div>
+</section>
+{% endblock %}

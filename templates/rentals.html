@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}Rent Farm Equipment | AgroConnect{% endblock %}
+{% block description %}Rent tractors, power tillers, weeders, pumps and sprayers by the day from trusted owners on AgroConnect.{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Farmer Tools', url_for('tools.hub')), ('Equipment Rental', None)]) }}
+<section class="container page-block">
+  <div class="section-head"><div><span class="eyebrow">Pay per day, no purchase needed</span><h1>Rent Farm Equipment</h1></div>
+    <div class="head-actions"><a class="btn btn-outline btn-sm" href="{{ url_for('rentals.my_rentals') }}"><i class="fa-solid fa-calendar-check"></i> My Rentals</a>
+    {% if current_user and current_user['role'] in ('seller','admin') %}<a class="btn btn-primary btn-sm" href="{{ url_for('rentals.seller_rentals') }}">Manage equipment</a>{% endif %}</div></div>
+  <form class="rent-filter" method="get">
+    <div class="chip-row"><a class="chip {{ 'on' if not kind }}" href="{{ url_for('rentals.rentals', q=q) }}">All</a>{% for k in kinds %}<a class="chip {{ 'on' if kind == k }}" href="{{ url_for('rentals.rentals', kind=k, q=q) }}">{{ k }}</a>{% endfor %}</div>
+    <div class="wx-search"><input name="q" value="{{ q }}" placeholder="Search equipment, district or state" aria-label="Search equipment">{% if kind %}<input type="hidden" name="kind" value="{{ kind }}">{% endif %}<button class="btn btn-primary" type="submit">Search</button></div>
+  </form>
+  {% if items %}<div class="rent-grid">{% for r in items %}
+    <article class="rent-card"><a href="{{ url_for('rentals.rental_details', iid=r.id) }}" class="rent-media"><img src="{{ img(r.image) }}" alt="{{ r.name }}" loading="lazy"><span class="tag">{{ r.kind }}</span></a>
+      <div class="rent-body"><h3><a href="{{ url_for('rentals.rental_details', iid=r.id) }}">{{ r.name }}</a></h3>
+        <p class="muted small"><i class="fa-solid fa-location-dot"></i> {{ r.district }}, {{ r.state }} · {{ r.business_name }}</p>
+        <div class="rent-price"><strong>₹{{ '{:,.0f}'.format(r.price_per_day) }}</strong><span>/ day</span><small>Refundable deposit ₹{{ '{:,.0f}'.format(r.deposit) }}</small></div>
+        <a class="btn btn-primary btn-block" href="{{ url_for('rentals.rental_details', iid=r.id) }}">Check dates &amp; book</a></div></article>{% endfor %}</div>
+  {% else %}<div class="empty-state"><i class="fa-solid fa-tractor"></i><h3>No equipment found</h3><p>Try another type or search.</p></div>{% endif %}
+</section>
+{% endblock %}

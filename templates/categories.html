@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}Shop by Category – AgroConnect{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Categories', None)]) }}
+<section class="section"><div class="container">
+  <div class="section-head"><h1>{% if account_type == 'farmer' %}Farm Input Categories{% elif account_type == 'customer' %}Shop Categories{% elif account_type == 'seller' %}Product Categories{% else %}Shop by Category{% endif %}</h1></div>
+  <div class="category-grid">
+    {% for c in cats %}
+    <a class="category-card" href="{{ url_for('products.shop', category=c.slug) }}">
+      <img class="category-image" src="{{ img(c.image) }}" alt="{{ c.name }}" loading="lazy">
+      <div class="category-info"><h3>{{ c.name }}</h3><span>{{ c.n }} products</span><i class="fa-solid fa-arrow-right-long"></i></div>
+      <p class="category-desc">{{ c.description }}</p>
+    </a>{% endfor %}
+  </div>
+</div></section>
+{% endblock %}

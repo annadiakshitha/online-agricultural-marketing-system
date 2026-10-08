@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Create Account – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">{% endblock %}
+{% block content %}
+{% set role = form.role or request.args.get('role', 'customer') %}
+<section class="auth">
+  <div class="auth-side" style="--bg: url('{{ img('banners/marketplace.jpg') }}')"><div><h2>Join India's growing farm marketplace</h2><p>Buy genuine inputs or sell directly to thousands of farmers.</p></div></div>
+  <div class="auth-card">
+    <h1>Create account</h1><p class="muted">It takes less than a minute.</p>
+    <form method="post" id="registerForm" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="role-switch" role="radiogroup" aria-label="Account type">
+        <label><input type="radio" name="role" value="customer" {{ 'checked' if role not in ('seller','farmer') }}><span><i class="fa-solid fa-basket-shopping"></i> Customer</span></label>
+        <label><input type="radio" name="role" value="farmer" {{ 'checked' if role == 'farmer' }}><span><i class="fa-solid fa-wheat-awn"></i> Farmer</span></label>
+        <label><input type="radio" name="role" value="seller" {{ 'checked' if role == 'seller' }}><span><i class="fa-solid fa-store"></i> Seller</span></label>
+      </div>
+      <div class="field"><label for="name">Full Name</label><input id="name" name="name" value="{{ form.name or '' }}" required autocomplete="name"></div>
+      <div class="field-row">
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" value="{{ form.email or '' }}" required autocomplete="email"></div>
+        <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" inputmode="tel" placeholder="9876543210" value="{{ form.phone or '' }}" required autocomplete="tel"></div>
+      </div>
+      <div class="field-row seller-only" id="sellerFields" hidden>
+        <div class="field"><label for="business">Business / Farm name</label><input id="business" name="business" value="{{ form.business or '' }}"></div>
+        <div class="field"><label for="location">Location</label><input id="location" name="location" placeholder="District, State" value="{{ form.location or '' }}"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label for="password">Password</label><div class="pw"><input id="password" name="password" type="password" minlength="6" required autocomplete="new-password"><button type="button" class="pw-toggle" aria-label="Show password"><i class="fa-regular fa-eye"></i></button></div></div>
+        <div class="field"><label for="confirm_password">Confirm Password</label><input id="confirm_password" name="confirm_password" type="password" required autocomplete="new-password"></div>
+      </div>
+      <button class="btn btn-primary btn-block btn-lg" type="submit">Create Account</button>
+    </form>
+    <p class="auth-alt">Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+  </div>
+</section>
+{% endblock %}
+{% block footer %}{% endblock %}
+{% block js %}<script src="{{ url_for('static', filename='js/auth.js') }}"></script>{% endblock %}

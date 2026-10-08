@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ title or 'Page Not Found' }} – AgroConnect{% endblock %}
+{% block content %}
+<section class="container empty-state big">
+  <i class="fa-solid fa-seedling"></i>
+  <h1>{{ code or 404 }}</h1><h2>{{ title or 'Page Not Found' }}</h2>
+  <p>{{ message or "The page you are looking for doesn't exist or has been moved." }}</p>
+  <div class="hero-actions center"><a class="btn btn-primary" href="{{ url_for('main.index') }}">Back to Home</a><a class="btn btn-outline" href="{{ url_for('products.shop') }}">Browse Products</a></div>
+</section>
+{% endblock %}

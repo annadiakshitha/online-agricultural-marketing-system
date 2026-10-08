@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}Coupons – AgroConnect Admin{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Admin', url_for('main.admin_dashboard')), ('Coupons', None)]) }}
+<section class="container page-block"><div class="section-head"><h1>Coupons &amp; Offers</h1></div>
+  <div class="tool-layout">
+    <form class="checkout-card" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><h2>Create coupon</h2>
+      <div class="field"><label for="cCode">Code</label><input id="cCode" name="code" required maxlength="20" placeholder="DIWALI15" style="text-transform:uppercase"></div>
+      <div class="field-row"><div class="field"><label for="cKind">Type</label><select id="cKind" name="kind"><option value="percent">Percent off</option><option value="flat">Flat ₹ off</option></select></div>
+        <div class="field"><label for="cVal">Value</label><input id="cVal" name="value" type="number" step="any" min="1" required></div></div>
+      <div class="field-row"><div class="field"><label for="cMin">Minimum order (₹)</label><input id="cMin" name="min_order" type="number" min="0" value="0"></div><div class="field"><label for="cMax">Max discount (₹)</label><input id="cMax" name="max_discount" type="number" min="0"></div></div>
+      <div class="field-row"><div class="field"><label for="cExp">Expires</label><input id="cExp" name="expires" type="date"></div><div class="field"><label for="cLim">Total uses</label><input id="cLim" name="usage_limit" type="number" min="1"></div></div>
+      <div class="field"><label for="cDesc">Description</label><input id="cDesc" name="description" maxlength="120"></div>
+      <button class="btn btn-primary" type="submit">Create coupon</button></form>
+    <div class="checkout-card"><h2>All coupons</h2><div class="table-wrap"><table class="table"><thead><tr><th>Code</th><th>Offer</th><th>Min</th><th>Used</th><th>Status</th><th></th></tr></thead><tbody>
+      {% for c in coupons %}<tr><td><b>{{ c.code }}</b></td><td>{{ c.value|int }}{{ '%' if c.kind == 'percent' else ' ₹ off' }}{% if c.max_discount %}<br><small class="muted">max ₹{{ c.max_discount|int }}</small>{% endif %}</td><td>₹{{ c.min_order|int }}</td>
+        <td>{{ c.used_count }}{% if c.usage_limit %} / {{ c.usage_limit }}{% endif %}</td><td><span class="status {{ 'status-approved' if c.active else 'status-rejected' }}">{{ 'Active' if c.active else 'Off' }}</span></td>
+        <td><form method="post" action="{{ url_for('coupons.toggle', cid=c.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-outline btn-sm">{{ 'Disable' if c.active else 'Enable' }}</button></form></td></tr>{% endfor %}</tbody></table></div></div>
+  </div></section>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}My Rentals – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Equipment Rental', url_for('rentals.rentals')), ('My Rentals', None)]) }}
+<section class="container page-block"><div class="section-head"><h1>My Rentals</h1></div>
+  {% if rows %}<div class="rent-list">{% for b in rows %}
+    <article class="checkout-card rent-row"><img src="{{ img(b.image) }}" alt="{{ b.name }}">
+      <div><h3>{{ b.name }}</h3><p class="muted small">{{ b.start_date }} → {{ b.end_date }} · {{ b.days }} day{{ 's' if b.days != 1 }} · {{ b.business_name }}, {{ b.district }}</p>
+        <p class="small">Rent ₹{{ '{:,.0f}'.format(b.rent) }} + deposit ₹{{ '{:,.0f}'.format(b.deposit) }} = <b>₹{{ '{:,.0f}'.format(b.total) }}</b></p></div>
+      <div class="rent-actions"><span class="status status-{{ b.status|lower }}">{{ b.status }}</span>
+        {% if b.status in ('Requested','Confirmed') and b.start_date > today %}<button class="btn btn-outline btn-sm" data-cancel="{{ b.id }}">Cancel</button>{% endif %}</div></article>{% endfor %}</div>
+  {% else %}<div class="empty-state"><i class="fa-solid fa-calendar-xmark"></i><h3>No rentals yet</h3><p>Book a tractor, tiller or pump for the days you need it.</p><a class="btn btn-primary" href="{{ url_for('rentals.rentals') }}">Browse equipment</a></div>{% endif %}
+</section>
+{% endblock %}
+{% block js %}<script src="{{ url_for('static', filename='js/rentals.js') }}"></script>{% endblock %}

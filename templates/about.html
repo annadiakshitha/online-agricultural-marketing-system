@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}About AgroConnect{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('About', None)]) }}
+<section class="page-hero" style="--bg: url('{{ img('hero/hero-farmer-field.jpg') }}')"><div class="container"><h1>Empowering Farmers. Connecting Markets.</h1><p>AgroConnect brings genuine agricultural inputs and trusted sellers together in one dependable marketplace.</p></div></section>
+<section class="section"><div class="container two-col">
+  <div><h2>Our mission</h2><p>Farmers often travel long distances to find genuine seeds, fertilizers and equipment, and pay inconsistent prices when they do. AgroConnect puts verified sellers, transparent pricing and doorstep delivery in one place.</p>
+  <p>We currently list <strong>{{ stats.products }}</strong> approved products from <strong>{{ stats.sellers }}</strong> sellers in this demo catalogue, covering seeds, nutrients, crop protection, tools, irrigation, machinery, organic inputs and animal feed.</p></div>
+  <img class="rounded" src="{{ img('banners/marketplace.jpg') }}" alt="Farmer inspecting crops" loading="lazy">
+</div></section>
+<section class="section alt"><div class="container feature-grid">
+  {% for i, t, d in [('circle-check','Genuine products','Sellers are verified and listings are reviewed before they go live.'),('indian-rupee-sign','Fair pricing','Clear MRP, discount and final price - no hidden charges.'),('handshake','Direct selling','Farmers can list their own products and reach buyers across states.')] %}
+  <div class="feature-card"><span class="feature-icon"><i class="fa-solid fa-{{ i }}"></i></span><h3>{{ t }}</h3><p>{{ d }}</p></div>{% endfor %}
+</div></section>
+{% endblock %}

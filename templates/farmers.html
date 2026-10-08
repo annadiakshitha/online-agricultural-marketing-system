@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}Verified Farmers & Sellers – AgroConnect{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Farmers', None)]) }}
+<section class="section"><div class="container">
+  <div class="section-head"><h1>Verified Farmers &amp; Sellers</h1><a class="btn btn-primary" href="{{ url_for('auth.register', role='seller') }}">Start Selling</a></div>
+  <div class="feature-grid">
+    {% for s in sellers %}
+    <div class="feature-card"><span class="feature-icon"><i class="fa-solid fa-store"></i></span>
+      <h3>{{ s.business_name }} {% if s.verified %}<span class="verified" title="Verified"><i class="fa-solid fa-circle-check"></i></span>{% endif %}</h3>
+      <p>{{ s.name }} · {{ s.location }}</p><p class="muted">{{ s.n }} products listed</p>
+      <a class="link-arrow" href="{{ url_for('products.shop', q=s.business_name) }}">View products <i class="fa-solid fa-arrow-right"></i></a></div>{% endfor %}
+  </div>
+</div></section>
+{% endblock %}

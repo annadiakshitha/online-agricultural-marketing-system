@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb, status_badge, timeline %}
+{% block title %}Order {{ o.order_number }} – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('My Orders', url_for('orders.orders')), (o.order_number, None)]) }}
+<section class="container page-block">
+  <div class="section-head"><h1>Order {{ o.order_number }}</h1>{{ status_badge(o.status) }}<a class="btn btn-outline btn-sm" href="{{ url_for('invoice.invoice_pdf', oid=o.id) }}"><i class="fa-solid fa-file-pdf"></i> Download Invoice</a></div>
+  <div class="cart-layout">
+    <div>
+      <div class="checkout-card"><h2>Tracking</h2>{{ timeline(o.status) }}</div>
+      {% include "_tracking_map.html" %}
+      <div class="checkout-card mt"><h2>Items</h2>
+        {% for i in items %}<div class="line-item"><img src="{{ img(i.image) }}" alt="{{ i.name }}"><div><strong>{% if i.product_id %}<a href="{{ url_for('products.product_details', pid=i.product_id) }}">{{ i.name }}</a>{% else %}{{ i.name }}{% endif %}</strong><span class="muted">Qty {{ i.quantity }} × {{ i.price|inr }}</span></div><strong>{{ (i.price * i.quantity)|inr }}</strong></div>{% endfor %}
+      </div>
+    </div>
+    <aside class="summary">
+      <h2>Order Details</h2>
+      <dl class="kv"><dt>Date</dt><dd>{{ o.created_at|date('%d %b %Y, %I:%M %p') }}</dd><dt>Items total</dt><dd>{{ sub|inr }}</dd><dt>Order total</dt><dd><strong>{{ o.total_amount|inr }}</strong></dd>
+      <dt>Payment</dt><dd>{{ o.payment_method }}{% if pay %} · {{ pay.status }}{% endif %}</dd><dt>Ship to</dt><dd>{{ o.customer_name }}<br>{{ o.shipping_address }}<br>{{ o.phone }}</dd></dl>
+      <p class="hint">Expected delivery: 3–5 business days from order date.</p>
+    </aside>
+  </div>
+</section>
+{% endblock %}
+{% block js %}<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="{{ url_for('static', filename='js/tracking-map.js') }}"></script>{% endblock %}

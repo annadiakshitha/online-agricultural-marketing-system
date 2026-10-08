@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% from "_macros.html" import product_grid %}
+{% block content %}
+<section class="hero">
+  <img class="hero-image" src="{{ img('hero/hero-farmer-field.jpg') }}" alt="Farmer standing in a green crop field at sunrise" fetchpriority="high">
+  <div class="hero-overlay"></div>
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+  <canvas id="heroFx" aria-hidden="true"></canvas>
+  <div class="hero-floaters" aria-hidden="true">
+    <div class="floater"><img src="{{ img('products/tomato-seeds.jpg') }}" alt=""><div><b>Tomato Seeds</b><span>GreenGrow Agro</span><br><em>15% OFF</em></div></div>
+    <div class="floater"><img src="{{ img('products/tractor.jpg') }}" alt=""><div><b>Mini Tractor</b><span>VST Shakti</span><br><em>8% OFF</em></div></div>
+    <div class="floater"><img src="{{ img('products/drip-irrigation-kit.jpg') }}" alt=""><div><b>Drip Irrigation Kit</b><span>Jain Irrigation</span><br><em>29% OFF</em></div></div>
+  </div>
+  <div class="container hero-content fade-in">
+    <span class="trust-badge"><i class="fa-solid fa-shield-halved"></i> {% if account_type == 'customer' %}Trusted farm-to-home marketplace{% elif account_type == 'seller' %}Tools for growing agricultural businesses{% else %}Trusted by farmers across India{% endif %}</span>
+    <h1>{% if account_type == 'customer' %}Fresh Farm Products.<br><em>Delivered to Your Door.</em>{% elif account_type == 'farmer' %}Everything Your Farm Needs.<br><em>One Powerful Marketplace.</em>{% elif account_type == 'seller' %}Grow Your Agri Business.<br><em>Manage Everything in One Place.</em>{% else %}AgroConnect.<br><em>One Powerful Farm Marketplace.</em>{% endif %}</h1>
+    <p>{% if account_type == 'customer' %}Shop fresh vegetables, fruits, grains and organic produce from trusted agricultural sellers.{% elif account_type == 'farmer' %}Find seeds, fertilizers, crop protection, tools, irrigation, machinery and other farm essentials.{% elif account_type == 'seller' %}Manage your products, orders, customers, analytics and equipment rentals from your seller dashboard.{% else %}Connect agricultural products, farmers and trusted sellers in one place.{% endif %}</p>
+    <div class="hero-actions">
+      {% if account_type == 'seller' %}<a class="btn btn-primary btn-lg" href="{{ url_for('main.seller_dashboard') }}">Open Dashboard</a><a class="btn btn-outline btn-lg" href="{{ url_for('rentals.seller_rentals') }}">Manage Rentals</a>{% elif account_type == 'farmer' %}<a class="btn btn-primary btn-lg" href="{{ url_for('products.shop') }}">Shop Farm Inputs</a><a class="btn btn-outline btn-lg" href="{{ url_for('farmer.dashboard') }}">Open My Farm</a>{% else %}<a class="btn btn-primary btn-lg" href="{{ url_for('products.shop') }}">Shop Now</a><a class="btn btn-outline btn-lg" href="{{ url_for('products.categories') }}">Explore Categories</a>{% endif %}
+    </div>
+    <div class="hero-stats">
+      <div><strong>10,000+</strong><span>Farmers</span></div>
+      <div><strong>5,000+</strong><span>Products</span></div>
+      <div><strong>500+</strong><span>Verified Sellers</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true"><div class="marquee-track"><span><i class="fa-solid fa-leaf"></i> Genuine seeds & inputs</span><span><i class="fa-solid fa-truck-fast"></i> Free delivery above ₹2000</span><span><i class="fa-solid fa-shield-halved"></i> Verified sellers</span><span><i class="fa-solid fa-indian-rupee-sign"></i> Farmer-friendly pricing</span><span><i class="fa-solid fa-headset"></i> Support 6 days a week</span><span><i class="fa-solid fa-lock"></i> Secure checkout</span><span><i class="fa-solid fa-leaf"></i> Genuine seeds & inputs</span><span><i class="fa-solid fa-truck-fast"></i> Free delivery above ₹2000</span><span><i class="fa-solid fa-shield-halved"></i> Verified sellers</span><span><i class="fa-solid fa-indian-rupee-sign"></i> Farmer-friendly pricing</span><span><i class="fa-solid fa-headset"></i> Support 6 days a week</span><span><i class="fa-solid fa-lock"></i> Secure checkout</span><span><i class="fa-solid fa-leaf"></i> Genuine seeds & inputs</span><span><i class="fa-solid fa-truck-fast"></i> Free delivery above ₹2000</span><span><i class="fa-solid fa-shield-halved"></i> Verified sellers</span><span><i class="fa-solid fa-indian-rupee-sign"></i> Farmer-friendly pricing</span><span><i class="fa-solid fa-headset"></i> Support 6 days a week</span><span><i class="fa-solid fa-lock"></i> Secure checkout</span><span><i class="fa-solid fa-leaf"></i> Genuine seeds & inputs</span><span><i class="fa-solid fa-truck-fast"></i> Free delivery above ₹2000</span><span><i class="fa-solid fa-shield-halved"></i> Verified sellers</span><span><i class="fa-solid fa-indian-rupee-sign"></i> Farmer-friendly pricing</span><span><i class="fa-solid fa-headset"></i> Support 6 days a week</span><span><i class="fa-solid fa-lock"></i> Secure checkout</span></div></div>
+
+<section class="section" id="portals"><div class="container">
+  <div class="section-head center"><div><span class="eyebrow">One platform, three experiences</span><h2>Choose Your Interface</h2><p class="muted">Whether you buy, grow or sell, AgroConnect has a space built for you.</p></div></div>
+  <div class="portal-grid reveal">
+    <article class="portal {{ 'you' if current_user and not is_farmer and current_user['role'] == 'customer' }}"><span class="tool-icon"><i class="fa-solid fa-basket-shopping"></i></span><h3>Customer</h3><p>Shop genuine farm inputs with doorstep delivery.</p>
+      <ul><li><i class="fa-solid fa-check"></i>Search, filters and wishlist</li><li><i class="fa-solid fa-check"></i>Coupons and PDF invoices</li><li><i class="fa-solid fa-check"></i>Live order tracking on a map</li></ul>
+      <a class="btn btn-primary" href="{{ url_for('products.shop') if current_user else url_for('auth.register', role='customer') }}">{{ 'Start shopping' if current_user else 'Join as Customer' }}</a></article>
+    <article class="portal {{ 'you' if is_farmer }}"><span class="tool-icon"><i class="fa-solid fa-wheat-awn"></i></span><h3>Farmer</h3><p>A personal farm dashboard with tools made for your fields.</p>
+      <ul><li><i class="fa-solid fa-check"></i>Weather and farm advisory</li><li><i class="fa-solid fa-check"></i>Crop Doctor and fertilizer plans</li><li><i class="fa-solid fa-check"></i>Rent tractors, tillers and pumps</li></ul>
+      <a class="btn btn-primary" href="{{ url_for('farmer.dashboard') if current_user else url_for('auth.register', role='farmer') }}">{{ 'Open farmer dashboard' if current_user else 'Join as Farmer' }}</a></article>
+    <article class="portal {{ 'you' if current_user and current_user['role'] == 'seller' }}"><span class="tool-icon"><i class="fa-solid fa-store"></i></span><h3>Seller</h3><p>Reach thousands of farmers and grow your agri business.</p>
+      <ul><li><i class="fa-solid fa-check"></i>Product and order management</li><li><i class="fa-solid fa-check"></i>Sales analytics dashboard</li><li><i class="fa-solid fa-check"></i>List equipment for rent</li></ul>
+      <a class="btn btn-primary" href="{{ url_for('main.seller_dashboard') if current_user and current_user['role'] == 'seller' else url_for('auth.register', role='seller') }}">{{ 'Open seller dashboard' if current_user and current_user['role'] == 'seller' else 'Join as Seller' }}</a></article>
+  </div></div></section>
+
+<section class="stats" aria-label="AgroConnect in numbers"><div class="container stats-grid">
+  <div><strong data-counter="10" data-suffix="K+">0</strong><span>Farmers</span></div>
+  <div><strong data-counter="5" data-suffix="K+">0</strong><span>Products</span></div>
+  <div><strong data-counter="500" data-suffix="+">0</strong><span>Verified Sellers</span></div>
+  <div><strong data-counter="25" data-suffix="+">0</strong><span>States Served</span></div>
+</div></section>
+
+{% if account_type != 'seller' %}<section class="section"><div class="container">
+  <div class="section-head"><h2>{% if account_type == 'customer' %}Shop Fresh Products{% else %}Farm Inputs by Category{% endif %}</h2><a class="link-arrow" href="{{ url_for('products.categories') }}">View all <i class="fa-solid fa-arrow-right"></i></a></div>
+  <div class="category-grid">
+    {% for c in cats %}
+    <a class="category-card reveal" href="{{ url_for('products.shop', category=c.slug) }}">
+      <img class="category-image" src="{{ img(c.image) }}" alt="{{ c.name }} – agricultural products" loading="lazy">
+      <div class="category-info"><h3>{{ c.name }}</h3><span>{{ c.n }} products</span><i class="fa-solid fa-arrow-right-long" aria-label="Explore {{ c.name }}"></i></div>
+      <p class="category-desc">{{ c.description }}</p>
+      <p class="category-desc">{{ c.description }}</p>
+    </a>
+    {% endfor %}
+  </div>
+</div></section>{% endif %}
+
+<section class="section alt"><div class="container">
+  <div class="section-head"><h2>{% if account_type == 'customer' %}Featured Fresh Products{% elif account_type == 'farmer' %}Recommended Farm Inputs{% else %}Your Product Listings{% endif %}</h2><a class="link-arrow" href="{{ url_for('products.shop') }}">View all <i class="fa-solid fa-arrow-right"></i></a></div>
+  {{ product_grid('data-featured="1" data-limit="8"', 8) }}
+</div></section>
+
+<section class="section"><div class="container">
+  <div class="deal-banner reveal" style="--bg: url('{{ img('banners/deals.jpg') }}')">
+    <div><span class="eyebrow">Today's Agricultural Deals</span><h2>Farming Essentials<br>Up to 40% OFF</h2>
+    <p>Limited-period prices on seeds, irrigation kits, sprayers and machinery.</p>
+    <a class="btn btn-light btn-lg" href="{{ url_for('main.deals') }}">Shop Deals</a></div>
+  </div>
+</div></section>
+
+<section class="section alt"><div class="container">
+  <div class="section-head center"><h2>Why AgroConnect</h2></div>
+  <div class="feature-grid">
+    {% for icon, t, d in [('circle-check','Verified Products','100% genuine agricultural products.'),('user-shield','Trusted Sellers','Buy from verified agricultural suppliers.'),('lock','Secure Payments','Safe and reliable checkout.'),('truck-fast','Fast Delivery','Reliable delivery to your doorstep.'),('indian-rupee-sign','Farmer-Friendly Prices','Competitive agricultural pricing.'),('headset','Expert Support','Get assistance whenever needed.')] %}
+    <div class="feature-card reveal"><span class="feature-icon"><i class="fa-solid fa-{{ icon }}"></i></span><h3>{{ t }}</h3><p>{{ d }}</p></div>
+    {% endfor %}
+  </div>
+</div></section>
+
+<section class="section"><div class="container">
+  <div class="section-head center"><h2>Farmer Stories</h2><p class="muted">Stories from farming communities across South and Central India. Portraits are illustrative stock photographs.</p></div>
+  <div class="testimonial-grid">
+    {% for img_, name, loc, text in [('farmers/farmer-01.jpg','Ramesh Kumar','Nalgonda, Telangana','AgroConnect helped me find quality seeds at a much better price.'),('farmers/farmer-02.jpg','Mahesh Babu','Kurnool, Andhra Pradesh','The drip irrigation kit arrived in four days and the support team guided me through the setup.'),('farmers/farmer-03.jpg','Kiran Shetty','Udupi, Karnataka','I now sell my organic inputs directly to farmers across the state. Orders come in every week.')] %}
+    <figure class="testimonial reveal">
+      <div class="stars" aria-label="5 out of 5 stars">{% for _ in range(5) %}<i class="fa-solid fa-star"></i>{% endfor %}</div>
+      <blockquote>“{{ text }}”</blockquote>
+      <figcaption><img src="{{ img(img_) }}" alt="Portrait of {{ name }}" loading="lazy"><div><strong>{{ name }}</strong><span>{{ loc }}</span><span class="illustrative">Illustrative image</span></div></figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+</div></section>
+
+<section class="section alt"><div class="container">
+  <div class="section-head center"><h2>How It Works</h2></div>
+  <div class="steps">
+    {% for n, icon, t in [('01','magnifying-glass','Browse Products'),('02','list-check','Choose What You Need'),('03','cart-shopping','Place Your Order'),('04','truck','Get It Delivered')] %}
+    <div class="step reveal"><span class="step-num">{{ n }}</span><i class="fa-solid fa-{{ icon }}"></i><h3>{{ t }}</h3></div>
+    {% endfor %}
+  </div>
+</div></section>
+
+<section class="section"><div class="container">
+  <div class="sell-banner reveal">
+    <img src="{{ img('banners/marketplace.jpg') }}" alt="Farmer inspecting crops in the field" loading="lazy">
+    <div><span class="eyebrow">Farmer Marketplace</span><h2>Sell Directly. Earn More.</h2>
+    <p>Connect directly with buyers and reach a wider agricultural marketplace.</p>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('auth.register', role='seller') }}">Start Selling</a></div>
+  </div>
+</div></section>
+
+<section class="section alt"><div class="container">
+  <div class="section-head"><h2>Agricultural Insights</h2></div>
+  <div class="blog-grid">
+    {% for im, cat, date, t, d in [('blog/tomato-seed-guide.jpg','Seeds','12 Sep 2026','How to Choose Tomato Seeds','Match variety, season and fruit type so you get the germination and yield you are paying for.'),('blog/drip-irrigation-techniques.jpg','Irrigation','04 Sep 2026','Modern Drip Irrigation Techniques','Drip systems can cut water use by up to 60% while improving uniformity across the field.'),('blog/organic-farming-basics.jpg','Organic','28 Aug 2026','Organic Farming Basics','Practical steps for building soil health with compost, bio-inputs and crop rotation.'),('blog/fertilizer-selection-guide.jpg','Fertilizers','15 Aug 2026','How to Select Fertilizers','Read N-P-K ratios, match them to crop stage and soil tests, and avoid over-application.')] %}
+    <article class="blog-card reveal">
+      <img src="{{ img(im) }}" alt="{{ t }}" loading="lazy">
+      <div class="blog-body"><div class="blog-meta"><span class="tag">{{ cat }}</span><time>{{ date }}</time></div>
+      <h3>{{ t }}</h3><p>{{ d }}</p><a class="link-arrow" href="{{ url_for('products.shop', q=cat) }}">Read More <i class="fa-solid fa-arrow-right"></i></a></div>
+    </article>
+    {% endfor %}
+  </div>
+</div></section>
+
+<section class="newsletter"><div class="container">
+  <div><h2>Get Farming Insights in Your Inbox</h2><p>Weekly farming tips, product updates and agricultural insights.</p></div>
+  <form id="newsletterForm" novalidate>
+    <label for="nlEmail" class="sr-only">Email address</label>
+    <input id="nlEmail" type="email" placeholder="Enter your email address" required>
+    <button class="btn btn-light" type="submit">Subscribe</button>
+  </form>
+</div></section>
+{% endblock %}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}AgroConnect – Agricultural Products Marketplace for Farmers{% endblock %}</title>
+  <meta name="description" content="{% block description %}Buy quality seeds, fertilizers, farming tools, machinery and agricultural products from trusted sellers.{% endblock %}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="AgroConnect">
+  <meta property="og:title" content="{{ self.title() }}">
+  <meta property="og:description" content="{{ self.description() }}">
+  <meta property="og:image" content="{% block ogimage %}{{ img('hero/hero-farmer-field.jpg') }}{% endblock %}">
+  <meta name="theme-color" content="#050805">
+  <link rel="icon" href="{{ url_for('static', filename='images/logo/logo.svg') }}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/product.css') }}">
+  {% block css %}{% endblock %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/fx.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tracking.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tools.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/assistant.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="navbar" id="navbar">
+  <div class="container nav-inner">
+    <a href="{{ url_for('main.index') }}" class="brand" aria-label="AgroConnect home">
+      <img src="{{ url_for('static', filename='images/logo/logo.svg') }}" alt="" width="36" height="36"><span>Agro<b>Connect</b></span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+      <a href="{{ url_for('main.index') }}" class="{{ 'active' if request.endpoint == 'main.index' }}">Home</a>
+      {% if account_type == 'customer' %}
+        <a href="{{ url_for('products.shop') }}" class="{{ 'active' if request.endpoint == 'products.shop' }}">Shop</a>
+        <a href="{{ url_for('products.categories') }}" class="{{ 'active' if request.endpoint == 'products.categories' }}">Categories</a>
+        <a href="{{ url_for('main.deals') }}" class="{{ 'active' if request.endpoint == 'main.deals' }}">Deals</a>
+        <a href="{{ url_for('main.farmers') }}" class="{{ 'active' if request.endpoint == 'main.farmers' }}">Farmers</a>
+      {% elif account_type == 'farmer' %}
+        <a href="{{ url_for('products.shop') }}" class="{{ 'active' if request.endpoint == 'products.shop' }}">Farm Inputs</a>
+        <a href="{{ url_for('products.categories') }}" class="{{ 'active' if request.endpoint == 'products.categories' }}">Input Categories</a>
+        <a href="{{ url_for('farmer.dashboard') }}" class="{{ 'active' if request.endpoint == 'farmer.dashboard' }}">My Farm</a>
+        <a href="{{ url_for('tools.hub') }}" class="{{ 'active' if request.endpoint == 'tools.hub' }}">Farm Tools</a>
+        <a href="{{ url_for('rentals.rentals') }}" class="{{ 'active' if request.endpoint in ('rentals.rentals','rentals.rental_details') }}">Equipment Rental</a>
+      {% elif account_type == 'seller' %}
+        <a href="{{ url_for('main.seller_dashboard') }}" class="{{ 'active' if request.endpoint == 'main.seller_dashboard' }}">Dashboard</a>
+        <a href="{{ url_for('main.seller_dashboard') }}#products">Products</a>
+        <a href="{{ url_for('main.seller_dashboard') }}#orders">Orders</a>
+        <a href="{{ url_for('rentals.seller_rentals') }}" class="{{ 'active' if request.endpoint == 'rentals.seller_rentals' }}">Rentals</a>
+      {% else %}
+        <a href="{{ url_for('products.shop') }}">Shop</a><a href="{{ url_for('products.categories') }}">Categories</a>
+        <a href="{{ url_for('main.deals') }}">Deals</a>
+      {% endif %}
+      {% if account_type != 'seller' %}<a href="{{ url_for('main.about') }}" class="{{ 'active' if request.endpoint == 'main.about' }}">About</a>{% endif %}
+    </nav>
+    <div class="nav-actions">
+      <div class="lang-menu" id="langMenu">
+        <button class="icon-btn lang-btn" id="langBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Language" data-no-i18n><i class="fa-solid fa-globe"></i><span data-lang-label>EN</span><i class="fa-solid fa-chevron-down" style="font-size:.6rem"></i></button>
+        <div class="dropdown lang-dd" id="langDropdown" role="menu" aria-label="Choose language" data-no-i18n></div>
+      </div>
+      <button class="icon-btn" id="searchToggle" aria-label="Search products"><i class="fa-solid fa-magnifying-glass"></i></button>
+      {% if account_type in ('customer','farmer','guest') %}<a class="icon-btn" href="{{ url_for('main.wishlist') }}" aria-label="Wishlist"><i class="fa-regular fa-heart"></i><span class="badge" data-wish-count>0</span></a>
+      <a class="icon-btn" href="{{ url_for('cart.cart') }}" aria-label="Cart"><i class="fa-solid fa-cart-shopping"></i><span class="badge" data-cart-count>0</span></a>{% endif %}
+      <div class="account-menu">
+        <button class="icon-btn account-btn" aria-haspopup="true" aria-expanded="false" id="accountBtn" aria-label="Account">
+          <i class="fa-regular fa-user"></i>{% if current_user %}<span class="acc-name">{{ current_user['name'].split()[0] }}</span>{% endif %}
+        </button>
+        <div class="dropdown" id="accountDropdown">
+          {% if current_user %}
+            <a href="{{ url_for('main.profile') }}"><i class="fa-regular fa-id-card"></i> My Profile</a>
+            {% if account_type in ('customer','farmer') %}<a href="{{ url_for('orders.orders') }}"><i class="fa-solid fa-box"></i> My Orders</a>{% endif %}
+            {% if account_type == 'farmer' %}<a href="{{ url_for('farmer.dashboard') }}"><i class="fa-solid fa-wheat-awn"></i> Farmer Dashboard</a><a href="{{ url_for('rentals.my_rentals') }}"><i class="fa-solid fa-calendar-check"></i> My Rentals</a>{% endif %}
+            {% if account_type in ('seller','admin') %}<a href="{{ url_for('rentals.seller_rentals') }}"><i class="fa-solid fa-tractor"></i> Manage Rentals</a>{% endif %}
+            {% if current_user['role'] == 'admin' %}<a href="{{ url_for('coupons.admin_coupons') }}"><i class="fa-solid fa-ticket"></i> Coupons</a>{% endif %}
+            {% if current_user['role'] == 'seller' %}<a href="{{ url_for('main.seller_dashboard') }}"><i class="fa-solid fa-store"></i> Seller Dashboard</a>{% endif %}
+            {% if current_user['role'] == 'admin' %}<a href="{{ url_for('main.admin_dashboard') }}"><i class="fa-solid fa-gauge"></i> Admin Dashboard</a>{% endif %}
+            <a href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+          {% else %}
+            <a href="{{ url_for('auth.login') }}"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+            <a href="{{ url_for('auth.register') }}"><i class="fa-solid fa-user-plus"></i> Register</a>
+          {% endif %}
+        </div>
+      </div>
+      <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+  <div class="search-bar" id="searchBar">
+    <form class="container" action="{{ url_for('products.shop') }}" method="get" role="search">
+      <label for="navSearch" class="sr-only">Search products</label>
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input id="navSearch" name="q" type="search" placeholder="Search seeds, fertilizers, tools, sellers…" autocomplete="off">
+      <button class="btn btn-primary btn-sm" type="submit">Search</button>
+    </form>
+  </div>
+</header>
+
+<div class="flash-wrap" aria-live="polite">
+  {% with messages = get_flashed_messages(with_categories=true) %}{% for cat, msg in messages %}
+    <div class="flash flash-{{ cat }}" role="status"><span>{{ msg }}</span><button aria-label="Dismiss" onclick="this.parentElement.remove()">×</button></div>
+  {% endfor %}{% endwith %}
+</div>
+
+<main id="main">{% block content %}{% endblock %}</main>
+
+{% block footer %}
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      <a href="{{ url_for('main.index') }}" class="brand light"><img src="{{ url_for('static', filename='images/logo/logo.svg') }}" alt="" width="34" height="34"><span>Agro<b>Connect</b></span></a>
+      <p class="muted-light">Empowering Farmers. Connecting Markets.</p>
+      <ul><li><a href="{{ url_for('main.about') }}">About us</a></li><li><a href="{{ url_for('main.contact') }}">Contact</a></li><li><a href="{{ url_for('main.contact') }}#careers">Careers</a></li><li><a href="{{ url_for('main.contact') }}#privacy">Privacy Policy</a></li><li><a href="{{ url_for('main.contact') }}#terms">Terms</a></li></ul>
+    </div>
+    {% if account_type == 'customer' %}<div><h4>Shop</h4><ul>
+      <li><a href="{{ url_for('products.shop', category='fresh-vegetables') }}">Fresh Vegetables</a></li>
+      <li><a href="{{ url_for('products.shop', category='fruits') }}">Fruits</a></li>
+      <li><a href="{{ url_for('products.shop', category='grains-pulses') }}">Grains &amp; Pulses</a></li>
+      <li><a href="{{ url_for('products.shop', category='organic-produce') }}">Organic Produce</a></li></ul></div>
+    <div><h4>Customer Support</h4><ul>
+      <li><a href="{{ url_for('main.contact') }}#help">Help Center</a></li>
+      <li><a href="{{ url_for('main.contact') }}#shipping">Shipping</a></li>
+      <li><a href="{{ url_for('main.contact') }}#returns">Returns</a></li><li><a href="{{ url_for('main.contact') }}">Contact</a></li>
+      <li><a href="{{ url_for('orders.orders') }}">Track Order</a></li></ul></div>
+    {% elif account_type == 'farmer' %}<div><h4>Farmer Tools</h4><ul>
+      <li><a href="{{ url_for('farmer.dashboard') }}">Farmer Dashboard</a></li>
+      <li><a href="{{ url_for('cropdoctor.crop_doctor') }}">Crop Doctor</a></li>
+      <li><a href="{{ url_for('rentals.rentals') }}">Rent Equipment</a></li>
+      <li><a href="{{ url_for('tools.weather') }}">Weather</a></li>
+      <li><a href="{{ url_for('tools.fertilizer_calculator') }}">Fertilizer Calculator</a></li></ul></div>
+    {% elif account_type == 'seller' %}<div><h4>Seller</h4><ul><li><a href="{{ url_for('main.seller_dashboard') }}">Seller Dashboard</a></li><li><a href="{{ url_for('rentals.seller_rentals') }}">Manage Rentals</a></li></ul></div>
+    {% endif %}
+    <div><h4>Follow Us</h4><ul class="social">
+      <li><a href="https://www.facebook.com" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> Facebook</a></li>
+      <li><a href="https://www.instagram.com" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i> Instagram</a></li>
+      <li><a href="https://www.youtube.com" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i> YouTube</a></li>
+      <li><a href="https://www.linkedin.com" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i> LinkedIn</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><div class="container">© 2026 AgroConnect. All Rights Reserved.</div></div>
+</footer>
+{% endblock %}
+
+{% include "_assistant.html" %}
+<nav class="bottom-nav" aria-label="Mobile navigation">
+  <a href="{{ url_for('main.index') }}" class="{{ 'active' if request.endpoint == 'main.index' }}"><i class="fa-solid fa-house"></i><span>Home</span></a>
+  {% if account_type == 'seller' %}
+    <a href="{{ url_for('main.seller_dashboard') }}"><i class="fa-solid fa-store"></i><span>Dashboard</span></a>
+    <a href="{{ url_for('main.seller_dashboard') }}#products"><i class="fa-solid fa-boxes-stacked"></i><span>Products</span></a>
+    <a href="{{ url_for('rentals.seller_rentals') }}"><i class="fa-solid fa-tractor"></i><span>Rentals</span></a>
+  {% elif account_type == 'farmer' %}
+    <a href="{{ url_for('products.shop') }}"><i class="fa-solid fa-seedling"></i><span>Inputs</span></a>
+    <a href="{{ url_for('products.categories') }}"><i class="fa-solid fa-table-cells-large"></i><span>Categories</span></a>
+    <a href="{{ url_for('farmer.dashboard') }}"><i class="fa-solid fa-wheat-awn"></i><span>My Farm</span></a>
+  {% else %}
+    <a href="{{ url_for('products.shop') }}"><i class="fa-solid fa-store"></i><span>Shop</span></a>
+    <a href="{{ url_for('products.categories') }}"><i class="fa-solid fa-table-cells-large"></i><span>Categories</span></a>
+    <a href="{{ url_for('cart.cart') }}"><i class="fa-solid fa-cart-shopping"></i><span>Cart</span><em class="badge" data-cart-count>0</em></a>
+  {% endif %}
+  <a href="{{ url_for('main.profile') if current_user else url_for('auth.login') }}"><i class="fa-regular fa-user"></i><span>Account</span></a>
+</nav>
+
+<div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+<div class="modal" id="quickView" role="dialog" aria-modal="true" aria-label="Quick view" hidden></div>
+
+<script>window.AGRO = {csrf: "{{ csrf_token() }}", loggedIn: {{ 'true' if current_user else 'false' }},
+  freeAbove: {{ cfg.FREE_DELIVERY_ABOVE }}, deliveryFee: {{ cfg.DELIVERY_FEE }}, taxPercent: {{ cfg.TAX_PERCENT }},
+  urls: {product: "/product/", shop: "{{ url_for('products.shop') }}", cart: "{{ url_for('cart.cart') }}", login: "{{ url_for('auth.login') }}"}};</script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+<script src="{{ url_for('static', filename='js/fx.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/assistant.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+<script src="{{ url_for('static', filename='js/wishlist.js') }}"></script>
+<script src="{{ url_for('static', filename='js/products.js') }}"></script>
+{% block js %}{% endblock %}
+</body>
+</html>

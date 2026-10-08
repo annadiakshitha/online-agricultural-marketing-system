@@ -1,0 +1,45 @@
+PRAGMA foreign_keys = ON;
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE,
+  phone TEXT, password TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'customer'
+  CHECK (role IN ('customer','farmer','seller','admin')), photo TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS sellers (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  business_name TEXT NOT NULL, location TEXT, verified INTEGER DEFAULT 1, bio TEXT);
+CREATE TABLE IF NOT EXISTS categories (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL UNIQUE, slug TEXT NOT NULL UNIQUE,
+  image TEXT, description TEXT, audience TEXT NOT NULL DEFAULT 'farmer' CHECK (audience IN ('customer','farmer','both')));
+CREATE TABLE IF NOT EXISTS products (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT,
+  category_id INTEGER NOT NULL REFERENCES categories(id), seller_id INTEGER NOT NULL REFERENCES sellers(id),
+  price REAL NOT NULL, discount INTEGER DEFAULT 0, stock INTEGER DEFAULT 0, image TEXT,
+  rating REAL DEFAULT 0, reviews_count INTEGER DEFAULT 0, brand TEXT, tags TEXT, organic INTEGER DEFAULT 0,
+  specs TEXT, status TEXT DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected')),
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS cart (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE, quantity INTEGER DEFAULT 1,
+  UNIQUE(user_id, product_id));
+CREATE TABLE IF NOT EXISTS wishlist (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE, UNIQUE(user_id, product_id));
+CREATE TABLE IF NOT EXISTS orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, order_number TEXT UNIQUE, user_id INTEGER NOT NULL REFERENCES users(id),
+  total_amount REAL NOT NULL, status TEXT DEFAULT 'Order Placed', payment_method TEXT,
+  customer_name TEXT, phone TEXT, shipping_address TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS order_items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_id INTEGER REFERENCES products(id) ON DELETE SET NULL, name TEXT, quantity INTEGER NOT NULL, price REAL NOT NULL);
+CREATE TABLE IF NOT EXISTS addresses (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  line1 TEXT, village TEXT, district TEXT, state TEXT, pincode TEXT, is_default INTEGER DEFAULT 0);
+CREATE TABLE IF NOT EXISTS reviews (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE, rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  title TEXT, body TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS payments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  method TEXT, status TEXT, reference TEXT, amount REAL, created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE INDEX IF NOT EXISTS idx_products_cat ON products(category_id);
+CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}My Wishlist – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Wishlist', None)]) }}
+<section class="container page-block">
+  <h1>My Wishlist</h1>
+  <div class="wishlist-grid" id="wishlistGrid"></div>
+  <div class="empty-state" id="wishEmpty" hidden><i class="fa-regular fa-heart"></i><h3>Your wishlist is empty</h3><p>Tap the heart on any product to save it here.</p><a class="btn btn-primary" href="{{ url_for('products.shop') }}">Browse Products</a></div>
+</section>
+{% endblock %}
+{% block js %}<script>document.addEventListener('DOMContentLoaded', () => Wishlist.renderPage());</script>{% endblock %}

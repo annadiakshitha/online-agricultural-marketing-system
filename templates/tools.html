@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb %}
+{% block title %}Farmer Tools – AgroConnect{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Farmer Tools', None)]) }}
+<section class="container page-block">
+  <div class="section-head"><div><span class="eyebrow">Free for every farmer</span><h1>Farmer Tools</h1><p class="muted">Practical helpers for the field, built into your marketplace.</p></div></div>
+  <div class="tool-grid">
+    <a class="tool-card" href="{{ url_for('cropdoctor.crop_doctor') }}"><span class="tool-icon"><i class="fa-solid fa-microscope"></i></span><h3>Crop Doctor</h3><p>Upload a leaf photo or pick symptoms to find likely problems and what to do.</p><b>Check my crop <i class="fa-solid fa-arrow-right"></i></b></a>
+    <a class="tool-card" href="{{ url_for('rentals.rentals') }}"><span class="tool-icon"><i class="fa-solid fa-tractor"></i></span><h3>Equipment Rental</h3><p>Rent tractors, tillers, pumps and sprayers by the day from nearby owners.</p><b>Browse equipment <i class="fa-solid fa-arrow-right"></i></b></a>
+    <a class="tool-card" href="{{ url_for('tools.weather') }}"><span class="tool-icon"><i class="fa-solid fa-cloud-sun-rain"></i></span><h3>Weather &amp; Advisory</h3><p>7-day forecast with spraying, irrigation and heat advice for your district.</p><b>See forecast <i class="fa-solid fa-arrow-right"></i></b></a>
+    <a class="tool-card" href="{{ url_for('tools.fertilizer_calculator') }}"><span class="tool-icon"><i class="fa-solid fa-calculator"></i></span><h3>Fertilizer Calculator</h3><p>Urea, DAP and potash needed for your crop and field size, with a split schedule.</p><b>Calculate <i class="fa-solid fa-arrow-right"></i></b></a>
+  </div>
+</section>
+{% endblock %}

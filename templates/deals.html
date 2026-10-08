@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% from "_macros.html" import breadcrumb, product_grid %}
+{% block title %}Today's Agricultural Deals – AgroConnect{% endblock %}
+{% block content %}
+{{ breadcrumb([('Home', url_for('main.index')), ('Deals', None)]) }}
+<section class="container" style="margin-top:20px"><div class="deal-banner" style="--bg: url('{{ img('banners/deals.jpg') }}')"><div><span class="eyebrow">Limited period</span><h1>Up to 40% OFF<br>on Farming Essentials</h1><p>Biggest discounts first - updated whenever sellers change prices.</p></div></div></section>
+<section class="section"><div class="container">{{ product_grid('data-deals="1" data-limit="12"', 8) }}</div></section>
+{% endblock %}
